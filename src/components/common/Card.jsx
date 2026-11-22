@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { cn } from '@utils/helpers.js'
 
-export const Card = memo(function Card({ children, className = '', hover = true, padding = 'default', ...props }) {
+export const Card = memo(function Card({ children, className = '', hover = true, padding = 'default', variant = 'default', ...props }) {
   const paddingStyles = {
     none: '',
     default: 'p-6',
@@ -9,12 +9,20 @@ export const Card = memo(function Card({ children, className = '', hover = true,
     lg: 'p-8',
   }
 
+  const variantStyles = {
+    default: 'bg-white border border-gray-200',
+    elevated: 'bg-white border border-gray-100 shadow-lg',
+    outlined: 'bg-transparent border-2 border-primary-200',
+    filled: 'bg-primary-50 border border-primary-100',
+  }
+
   return (
     <div
       className={cn(
-        'bg-white rounded-xl border border-gray-200 shadow-card transition-shadow duration-200',
-        hover && 'hover:shadow-card-hover',
+        'rounded-xl shadow-card transition-all duration-200',
+        hover && 'hover:shadow-card-hover hover:-translate-y-0.5',
         paddingStyles[padding],
+        variantStyles[variant],
         className
       )}
       {...props}

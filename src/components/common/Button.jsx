@@ -24,6 +24,7 @@ export const Button = memo(function Button({
     danger: 'bg-error-500 text-white hover:bg-error-600 focus-visible:ring-error-500 active:bg-error-700',
     outline: 'border-2 border-primary-600 text-primary-600 hover:bg-primary-50 focus-visible:ring-primary-500 active:bg-primary-100',
     success: 'bg-success-600 text-white hover:bg-success-700 focus-visible:ring-success-500 active:bg-success-800',
+    accent: 'bg-accent-600 text-white hover:bg-accent-700 focus-visible:ring-accent-500 active:bg-accent-800',
   }
 
   const sizes = {
