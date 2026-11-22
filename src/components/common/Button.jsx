@@ -1,6 +1,7 @@
+import { memo } from 'react'
 import { cn } from '@utils/helpers.js'
 
-export function Button({
+export const Button = memo(function Button({
   children,
   variant = 'primary',
   size = 'md',
@@ -54,4 +55,6 @@ export function Button({
       {!loading && rightIcon && rightIcon}
     </button>
   )
-}
+})
+
+Button.displayName = 'Button'

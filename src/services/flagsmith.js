@@ -1,4 +1,4 @@
-import flagsmith, { createFlagsmithInstance } from '@flagsmith/flagsmith'
+import { createFlagsmithInstance } from '@flagsmith/flagsmith'
 
 const environmentId = import.meta.env.VITE_FLAGSMSITH_ENVIRONMENT_ID
 

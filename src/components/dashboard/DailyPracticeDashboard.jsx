@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo } from 'react'
 import { cn } from '@utils/helpers.js'
 import {
   CheckCircle2,
@@ -8,19 +8,18 @@ import {
   BookOpen,
   Target,
   Flame,
-  ArrowRight,
   RefreshCw,
   TrendingUp,
 } from 'lucide-react'
-import { Card, CardHeader, CardBody, CardTitle, CardDescription } from '@components/common/Card.jsx'
+import { Card } from '@components/common/Card.jsx'
 import { Button } from '@components/common/Button.jsx'
 import { LoadingSpinner, SkeletonCard } from '@components/common/LoadingSpinner.jsx'
+import { SectionHeader } from '@components/common/SectionHeader.jsx'
 import { MOCK_PRACTICE_DATA, DAILY_GOALS } from '@utils/constants.js'
-import { trackDashboardViewed, trackPracticeStarted, trackPracticeCompleted } from '@services/analytics.js'
 import { useExperiment } from '@hooks/useFlagsmith.js'
 import { useEventTracking } from '@hooks/useAnalytics.js'
 
-function ProgressRing({ progress, size = 80, strokeWidth = 6, className = '' }) {
+const ProgressRing = memo(function ProgressRing({ progress, size = 80, strokeWidth = 6, className = '' }) {
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
   const offset = circumference - (progress / 100) * circumference
@@ -53,9 +52,11 @@ function ProgressRing({ progress, size = 80, strokeWidth = 6, className = '' }) 
       </div>
     </div>
   )
-}
+})
 
-function DailyGoalCard({ goal, completed, onToggle }) {
+ProgressRing.displayName = 'ProgressRing'
+
+const DailyGoalCard = memo(function DailyGoalCard({ goal, completed, onToggle }) {
   const icons = {
     coding: Code,
     aptitude: Calculator,
@@ -97,9 +98,11 @@ function DailyGoalCard({ goal, completed, onToggle }) {
       </Button>
     </div>
   )
-}
+})
 
-function PracticeCard({ practice, onStart, loading }) {
+DailyGoalCard.displayName = 'DailyGoalCard'
+
+const PracticeCard = memo(function PracticeCard({ practice, onStart, loading }) {
   const difficultyColors = {
     Easy: 'bg-success-100 text-success-700',
     Medium: 'bg-warning-100 text-warning-700',
@@ -140,19 +143,21 @@ function PracticeCard({ practice, onStart, loading }) {
       </Button>
     </Card>
   )
-}
+})
+
+PracticeCard.displayName = 'PracticeCard'
 
 export function DailyPracticeDashboard() {
   const { variation, ready } = useExperiment()
-  const { trackDashboardView, trackPracticeStart, trackPracticeComplete } = useEventTracking()
+  const { trackDashboardView, trackPracticeStart } = useEventTracking()
   const [codingPractices, setCodingPractices] = useState([])
   const [aptitudePractices, setAptitudePractices] = useState([])
   const [goals, setGoals] = useState([])
   const [completedGoals, setCompletedGoals] = useState(new Set())
   const [loading, setLoading] = useState(true)
   const [startingSession, setStartingSession] = useState(null)
-  const [streak, setStreak] = useState(7)
-  const [totalCompleted, setTotalCompleted] = useState(23)
+  const [streak] = useState(7)
+  const [totalCompleted] = useState(23)
 
   useEffect(() => {
     if (ready && variation === 'daily_practice') {
@@ -173,13 +178,6 @@ export function DailyPracticeDashboard() {
       setStartingSession(null)
       alert(`Starting: ${practice.title}\n\nIn a real app, this would navigate to the practice interface.`)
     }, 500)
-  }
-
-  const handleCompletePractice = async (practice) => {
-    const sessionId = `practice-${practice.id}`
-    await trackPracticeComplete('coding', sessionId, 900)
-    setTotalCompleted(prev => prev + 1)
-    alert(`Completed: ${practice.title}! Great job!`)
   }
 
   const handleToggleGoal = (goalId) => {
@@ -323,18 +321,6 @@ export function DailyPracticeDashboard() {
           View Solutions
         </Button>
       </div>
-    </div>
-  )
-}
-
-function SectionHeader({ title, description, action, className = '' }) {
-  return (
-    <div className={cn('flex items-center justify-between mb-4', className)}>
-      <div>
-        <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-        {description && <p className="text-sm text-gray-500">{description}</p>}
-      </div>
-      {action && action}
     </div>
   )
 }

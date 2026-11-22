@@ -1,5 +1,4 @@
-import { Card, CardBody, CardTitle, CardDescription } from '@components/common/Card.jsx'
-import { Button } from '@components/common/Button.jsx'
+import { Card, CardTitle, CardDescription } from '@components/common/Card.jsx'
 import {
   Code,
   Calculator,
@@ -7,8 +6,6 @@ import {
   Target,
   TrendingUp,
   Trophy,
-  Users,
-  Zap,
   BarChart3,
 } from 'lucide-react'
 
@@ -83,7 +80,7 @@ export function Features() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {features.map((feature, index) => (
+          {features.map((feature) => (
             <Card key={feature.title} className="p-6 hover:shadow-card-hover transition-shadow h-full">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-100 text-primary-600 mb-4">
                 <feature.icon className="h-6 w-6" />
@@ -107,7 +104,7 @@ export function Features() {
               <p className="mt-3 text-gray-600">{experimentInfo.description}</p>
             </div>
             <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {experimentInfo.variations.map((variation, index) => (
+              {experimentInfo.variations.map((variation) => (
                 <Card key={variation.name} className="p-5">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100 text-primary-600">

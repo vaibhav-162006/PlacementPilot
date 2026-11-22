@@ -4,7 +4,6 @@ import {
   signIn,
   signOut,
   getSession,
-  getUser,
   onAuthStateChange,
   createProfile,
   getProfile,

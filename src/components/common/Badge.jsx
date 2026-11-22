@@ -1,6 +1,7 @@
+import { memo } from 'react'
 import { cn } from '@utils/helpers.js'
 
-export function Badge({ children, variant = 'primary', className = '', ...props }) {
+export const Badge = memo(function Badge({ children, variant = 'primary', className = '', ...props }) {
   const variants = {
     primary: 'bg-primary-100 text-primary-700',
     success: 'bg-success-100 text-success-700',
@@ -21,4 +22,6 @@ export function Badge({ children, variant = 'primary', className = '', ...props 
       {children}
     </span>
   )
-}
+})
+
+Badge.displayName = 'Badge'

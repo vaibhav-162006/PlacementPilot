@@ -1,29 +1,26 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo } from 'react'
 import { cn } from '@utils/helpers.js'
 import {
   CheckCircle2,
-  Clock,
   Code,
   Calculator,
   BookOpen,
   Target,
   Flag,
-  ArrowRight,
   ChevronDown,
   ChevronRight,
-  Trophy,
   Star,
   Lock,
 } from 'lucide-react'
-import { Card, CardHeader, CardBody, CardTitle, CardDescription } from '@components/common/Card.jsx'
+import { Card, CardHeader, CardBody } from '@components/common/Card.jsx'
 import { Button } from '@components/common/Button.jsx'
-import { LoadingSpinner, SkeletonCard } from '@components/common/LoadingSpinner.jsx'
+import { SkeletonCard } from '@components/common/LoadingSpinner.jsx'
+import { SectionHeader } from '@components/common/SectionHeader.jsx'
 import { MOCK_ROADMAP_DATA } from '@utils/constants.js'
-import { trackDashboardViewed, trackRoadmapViewed, trackLearningGoalCompleted } from '@services/analytics.js'
 import { useExperiment } from '@hooks/useFlagsmith.js'
 import { useEventTracking } from '@hooks/useAnalytics.js'
 
-function ProgressRing({ progress, size = 80, strokeWidth = 6, className = '' }) {
+const ProgressRing = memo(function ProgressRing({ progress, size = 80, strokeWidth = 6, className = '' }) {
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
   const offset = circumference - (progress / 100) * circumference
@@ -56,9 +53,11 @@ function ProgressRing({ progress, size = 80, strokeWidth = 6, className = '' }) 
       </div>
     </div>
   )
-}
+})
 
-function WeekCard({ week, expanded, onToggle, onGoalComplete, onViewWeek, completedGoals, totalGoals, weekProgress }) {
+ProgressRing.displayName = 'ProgressRing'
+
+const WeekCard = memo(function WeekCard({ week, expanded, onToggle, onGoalComplete, onViewWeek, completedGoals, weekProgress }) {
   const isCurrentWeek = week.week === 1
   const isLocked = week.week > 1 && completedGoals < (week.week - 1) * 4
 
@@ -125,9 +124,11 @@ function WeekCard({ week, expanded, onToggle, onGoalComplete, onViewWeek, comple
       )}
     </Card>
   )
-}
+})
 
-function GoalCard({ goal, weekNumber, completed, onComplete }) {
+WeekCard.displayName = "WeekCard"
+
+const GoalCard = memo(function GoalCard({ goal, weekNumber, completed, onComplete }) {
   const typeIcons = {
     coding: Code,
     aptitude: Calculator,
@@ -164,9 +165,11 @@ function GoalCard({ goal, weekNumber, completed, onComplete }) {
       </Button>
     </div>
   )
-}
+})
 
-function MilestoneCard({ milestone, completed, index }) {
+GoalCard.displayName = "GoalCard"
+
+const MilestoneCard = memo(function MilestoneCard({ milestone, completed, index }) {
   const colors = [
     'bg-primary-100 text-primary-600',
     'bg-success-100 text-success-600',
@@ -198,7 +201,9 @@ function MilestoneCard({ milestone, completed, index }) {
       </div>
     </div>
   )
-}
+})
+
+MilestoneCard.displayName = "MilestoneCard"
 
 export function PersonalizedRoadmapDashboard() {
   const { variation, ready } = useExperiment()
@@ -364,7 +369,6 @@ export function PersonalizedRoadmapDashboard() {
             onGoalComplete={handleGoalComplete}
             onViewWeek={handleViewWeek}
             completedGoals={completedGoals}
-            totalGoals={totalGoals}
             weekProgress={week.goals.length > 0
               ? Math.round((week.goals.filter(g => completedGoals.has(g.id)).length / week.goals.length) * 100)
               : 0}
@@ -397,18 +401,6 @@ export function PersonalizedRoadmapDashboard() {
           <p className="text-sm text-gray-500 mt-1">Learn to design scalable systems</p>
         </Card>
       </div>
-    </div>
-  )
-}
-
-function SectionHeader({ title, description, action, className = '' }) {
-  return (
-    <div className={cn('flex items-center justify-between mb-4', className)}>
-      <div>
-        <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-        {description && <p className="text-sm text-gray-500">{description}</p>}
-      </div>
-      {action && action}
     </div>
   )
 }

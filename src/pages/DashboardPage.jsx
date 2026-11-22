@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { AuthGuard } from '@components/auth/AuthGuard.jsx'
 import { Layout, PageHeader } from '@components/common/Layout.jsx'
 import { DailyPracticeDashboard } from '@components/dashboard/DailyPracticeDashboard.jsx'

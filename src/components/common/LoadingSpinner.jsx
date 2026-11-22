@@ -1,6 +1,7 @@
+import { memo } from 'react'
 import { cn } from '@utils/helpers.js'
 
-export function LoadingSpinner({ size = 'md', className = '', color = 'primary' }) {
+export const LoadingSpinner = memo(function LoadingSpinner({ size = 'md', className = '', color = 'primary' }) {
   const sizeClasses = {
     sm: 'h-4 w-4',
     md: 'h-8 w-8',
@@ -38,18 +39,22 @@ export function LoadingSpinner({ size = 'md', className = '', color = 'primary' 
       />
     </svg>
   )
-}
+})
 
-export function LoadingOverlay({ message = 'Loading...', className = '' }) {
+LoadingSpinner.displayName = 'LoadingSpinner'
+
+export const LoadingOverlay = memo(function LoadingOverlay({ message = 'Loading...', className = '' }) {
   return (
     <div className={cn('fixed inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center gap-4 z-50', className)}>
       <LoadingSpinner size="lg" />
       <p className="text-gray-600 font-medium">{message}</p>
     </div>
   )
-}
+})
 
-export function Skeleton({ className = '', variant = 'text', width, height, ...props }) {
+LoadingOverlay.displayName = 'LoadingOverlay'
+
+export const Skeleton = memo(function Skeleton({ className = '', variant = 'text', width, height, ...props }) {
   const baseStyles = 'animate-pulse bg-gray-200 rounded'
 
   const variantStyles = {
@@ -68,9 +73,11 @@ export function Skeleton({ className = '', variant = 'text', width, height, ...p
       {...props}
     />
   )
-}
+})
 
-export function SkeletonCard({ className = '' }) {
+Skeleton.displayName = 'Skeleton'
+
+export const SkeletonCard = memo(function SkeletonCard({ className = '' }) {
   return (
     <div className={cn('card animate-pulse', className)}>
       <Skeleton variant="card" className="mb-4" />
@@ -81,9 +88,11 @@ export function SkeletonCard({ className = '' }) {
       </div>
     </div>
   )
-}
+})
 
-export function SkeletonList({ count = 5, className = '' }) {
+SkeletonCard.displayName = 'SkeletonCard'
+
+export const SkeletonList = memo(function SkeletonList({ count = 5, className = '' }) {
   return (
     <div className={cn('space-y-4', className)}>
       {Array.from({ length: count }, (_, i) => (
@@ -91,4 +100,6 @@ export function SkeletonList({ count = 5, className = '' }) {
       ))}
     </div>
   )
-}
+})
+
+SkeletonList.displayName = 'SkeletonList'

@@ -7,13 +7,9 @@ import {
   BarChart3,
   LogOut,
   Menu,
-  X,
   ChevronLeft,
   ChevronRight,
   BookOpen,
-  Target,
-  Trophy,
-  Settings,
 } from 'lucide-react'
 import { useAuth } from '@contexts/AuthContext.jsx'
 import { Button } from './Button.jsx'
@@ -227,14 +223,4 @@ export function PageHeader({ title, description, action, className = '' }) {
   )
 }
 
-export function SectionHeader({ title, description, action, className = '' }) {
-  return (
-    <div className={cn('flex items-center justify-between mb-4', className)}>
-      <div>
-        <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-        {description && <p className="text-sm text-gray-500">{description}</p>}
-      </div>
-      {action && action}
-    </div>
-  )
-}
+export { SectionHeader } from './SectionHeader.jsx'

@@ -1,7 +1,7 @@
-import { forwardRef } from 'react'
+import { forwardRef, memo } from 'react'
 import { cn } from '@utils/helpers.js'
 
-export const Input = forwardRef(function Input({
+const Input = forwardRef(function Input({
   label,
   error,
   hint,
@@ -64,7 +64,10 @@ export const Input = forwardRef(function Input({
 
 Input.displayName = 'Input'
 
-export function Textarea({ label, error, hint, className = '', id, ...props }) {
+export const MemoizedInput = memo(Input)
+export { Input }
+
+export const Textarea = memo(function Textarea({ label, error, hint, className = '', id, ...props }) {
   const textareaId = id || label?.toLowerCase().replace(/\s+/g, '-')
 
   return (
@@ -99,9 +102,11 @@ export function Textarea({ label, error, hint, className = '', id, ...props }) {
       )}
     </div>
   )
-}
+})
 
-export function Select({ label, error, hint, options, className = '', id, ...props }) {
+Textarea.displayName = 'Textarea'
+
+export const Select = memo(function Select({ label, error, hint, options, className = '', id, ...props }) {
   const selectId = id || label?.toLowerCase().replace(/\s+/g, '-')
 
   return (
@@ -142,4 +147,6 @@ export function Select({ label, error, hint, options, className = '', id, ...pro
       )}
     </div>
   )
-}
+})
+
+Select.displayName = 'Select'

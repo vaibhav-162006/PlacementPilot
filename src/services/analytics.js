@@ -1,6 +1,6 @@
 import * as supabaseService from '@services/supabase.js'
 import { trackEvent as trackFlagsmithEvent, flushEvents as flushFlagsmithEvents } from '@services/flagsmith.js'
-import { EVENT_NAMES, STORAGE_KEYS, PRACTICE_TYPES, EXPERIMENT_VARIATIONS } from '@utils/constants.js'
+import { EVENT_NAMES, STORAGE_KEYS, EXPERIMENT_VARIATIONS } from '@utils/constants.js'
 import { getSessionStorage, setSessionStorage, generateId } from '@utils/helpers.js'
 
 let currentVariation = null

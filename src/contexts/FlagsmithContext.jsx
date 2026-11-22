@@ -3,8 +3,7 @@ import {
   initFlagsmith,
   getVariation,
   destroyFlagsmith,
-  waitForFlagsmith,
-  isFlagsmithReady
+  waitForFlagsmith
 } from '@services/flagsmith.js'
 import { EXPERIMENT_VARIATIONS } from '@utils/constants.js'
 import { useAuth } from './AuthContext.jsx'

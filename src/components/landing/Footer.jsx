@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom'
 import { BookOpen, GitBranch, MessageSquare, Users, Mail } from 'lucide-react'
 
+const CURRENT_YEAR = new Date().getFullYear()
+
 export function Footer() {
-  const currentYear = new Date().getFullYear()
+  const currentYear = CURRENT_YEAR
 
   const links = {
     product: [

@@ -158,7 +158,7 @@ export function ExperimentFunnelChart({ data }) {
       </CardHeader>
       <CardBody>
         <div className="space-y-3">
-          {funnelData.map((item, index) => (
+          {funnelData.map((item) => (
             <div key={item.stage} className="flex items-center gap-4">
               <div className="w-32 text-right text-sm font-medium text-gray-600">{item.stage}</div>
               <div className="flex-1 h-10 bg-gray-100 rounded overflow-hidden relative">

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { BookOpen, Mail, Lock, User, GraduationCap, Briefcase, Eye, EyeOff } from 'lucide-react'
+import { BookOpen, Mail, Lock, User, GraduationCap, Eye, EyeOff } from 'lucide-react'
 import { Button } from '@components/common/Button.jsx'
 import { Input, Select } from '@components/common/Input.jsx'
 import { Card } from '@components/common/Card.jsx'

@@ -1,8 +1,6 @@
-import { cn } from '@utils/helpers.js'
 import { formatRelativeTime } from '@utils/helpers.js'
 import { Card, CardHeader, CardBody, CardTitle } from '@components/common/Card.jsx'
 import { Badge } from '@components/common/Badge.jsx'
-import { LoadingSpinner } from '@components/common/LoadingSpinner.jsx'
 
 export function ParticipantsTable({ participants, loading }) {
   if (loading) {

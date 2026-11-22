@@ -6,9 +6,8 @@ import { Button } from '@components/common/Button.jsx'
 import { Input } from '@components/common/Input.jsx'
 import { useAuth } from '@contexts/AuthContext.jsx'
 import { useExperiment } from '@hooks/useFlagsmith.js'
-import { LoadingSpinner } from '@components/common/LoadingSpinner.jsx'
 import { formatDate, getVariationLabel } from '@utils/helpers.js'
-import { User, Mail, GraduationCap, Briefcase, Calendar, BarChart3, Settings } from 'lucide-react'
+import { User, Mail, GraduationCap, Calendar } from 'lucide-react'
 
 function ProfileContent() {
   const { profile, user, updateProfile, experimentVariation } = useAuth()
@@ -23,10 +22,7 @@ function ProfileContent() {
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
 
-  const graduationYears = Array.from({ length: 10 }, (_, i) => {
-    const year = new Date().getFullYear() + i
-    return year.toString()
-  })
+
 
   const targetRoles = [
     'Software Engineer',
