@@ -177,7 +177,7 @@ export function Layout({ children }) {
       <div className={cn('lg:pl-64 transition-all duration-300', sidebarCollapsed && 'lg:pl-20')}>
         {/* Top bar */}
         <header className="sticky top-0 z-30 bg-white border-b border-gray-200">
-          <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="flex h-12 items-center justify-between px-4 sm:px-6 lg:px-8">
             <button
               onClick={() => setSidebarOpen(true)}
               className="lg:hidden p-2 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600"
@@ -205,7 +205,7 @@ export function Layout({ children }) {
         </header>
 
         {/* Page content */}
-        <main className="p-4 sm:p-5 lg:p-6" role="main">
+        <main className="p-3 sm:p-4 lg:p-5" role="main">
           {children}
         </main>
       </div>
@@ -215,10 +215,10 @@ export function Layout({ children }) {
 
 export function PageHeader({ title, description, action, className = '' }) {
   return (
-    <div className={cn('mb-4', className)}>
-      <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-      {description && <p className="mt-1 text-gray-600">{description}</p>}
-      {action && <div className="mt-3">{action}</div>}
+    <div className={cn('mb-2', className)}>
+      <h1 className="text-xl font-bold text-gray-900">{title}</h1>
+      {description && <p className="mt-0.5 text-sm text-gray-600">{description}</p>}
+      {action && <div className="mt-2">{action}</div>}
     </div>
   )
 }
