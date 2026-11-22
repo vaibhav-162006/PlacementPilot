@@ -1,13 +1,15 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { AuthGuard } from '@components/auth/AuthGuard.jsx'
 import { Layout, PageHeader } from '@components/common/Layout.jsx'
 import { Card, CardHeader, CardBody, CardTitle } from '@components/common/Card.jsx'
 import { Button } from '@components/common/Button.jsx'
 import { Input } from '@components/common/Input.jsx'
+import { Badge } from '@components/common/Badge.jsx'
 import { useAuth } from '@contexts/AuthContext.jsx'
 import { useExperiment } from '@hooks/useFlagsmith.js'
-import { formatDate, getVariationLabel } from '@utils/helpers.js'
-import { User, Mail, GraduationCap, Calendar } from 'lucide-react'
+import { formatDate, getVariationLabel, cn } from '@utils/helpers.js'
+import { User, Mail, GraduationCap, Calendar, Flag, Award, Flame, Target, TrendingUp, Sparkles, CheckCircle2 } from 'lucide-react'
+import { EXPERIMENT_VARIATIONS } from '@utils/constants.js'
 
 function ProfileContent() {
   const { profile, user, updateProfile, experimentVariation } = useAuth()

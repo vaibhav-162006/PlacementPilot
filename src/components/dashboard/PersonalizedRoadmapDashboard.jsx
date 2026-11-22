@@ -11,9 +11,14 @@ import {
   ChevronRight,
   Star,
   Lock,
+  TrendingUp,
+  Sparkles,
+  Zap,
+  ArrowRight,
 } from 'lucide-react'
 import { Card, CardHeader, CardBody } from '@components/common/Card.jsx'
 import { Button } from '@components/common/Button.jsx'
+import { Badge } from '@components/common/Badge.jsx'
 import { SkeletonCard } from '@components/common/LoadingSpinner.jsx'
 import { SectionHeader } from '@components/common/SectionHeader.jsx'
 import { MOCK_ROADMAP_DATA } from '@utils/constants.js'
@@ -57,16 +62,52 @@ const ProgressRing = memo(function ProgressRing({ progress, size = 80, strokeWid
 
 ProgressRing.displayName = 'ProgressRing'
 
+const StatCard = memo(function StatCard({
+  title,
+  value,
+  icon,
+  iconBg = 'bg-primary-100',
+  iconColor = 'text-primary-600',
+  trend,
+  trendPositive = false,
+}) {
+  return (
+    <Card className="p-5 transition-all duration-200 hover:shadow-card-hover">
+      <div className="flex items-start justify-between">
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          <p className="text-2xl font-bold text-foreground mt-1">{value}</p>
+          {trend && (
+            <p className={cn(
+              'text-sm mt-2 flex items-center gap-1',
+              trendPositive ? 'text-success-600' : 'text-muted-foreground'
+            )}>
+              {trendPositive && <TrendingUp className="h-3.5 w-3.5" />}
+              {trend}
+            </p>
+          )}
+        </div>
+        <div className={cn('flex h-12 w-12 items-center justify-center rounded-xl shrink-0', iconBg, iconColor)}>
+          {icon}
+        </div>
+      </div>
+    </Card>
+  )
+})
+
+StatCard.displayName = 'StatCard'
+
 const WeekCard = memo(function WeekCard({ week, expanded, onToggle, onGoalComplete, onViewWeek, completedGoals, weekProgress }) {
   const isCurrentWeek = week.week === 1
   const isLocked = week.week > 1 && completedGoals < (week.week - 1) * 4
+  const weekCompleted = week.goals.filter(g => completedGoals.has(g.id)).length
 
   return (
-    <Card className={cn('overflow-hidden', isCurrentWeek && 'ring-2 ring-primary-200')}>
-      <CardHeader className={cn('p-4 cursor-pointer', isLocked && 'opacity-60')} onClick={!isLocked ? onToggle : undefined}>
+    <Card className={cn('overflow-hidden transition-all duration-200', isCurrentWeek && 'ring-2 ring-primary-200', isLocked && 'opacity-60')}>
+      <CardHeader className={cn('p-4', !isLocked && 'cursor-pointer hover:bg-muted/50')} onClick={!isLocked ? onToggle : undefined}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className={cn('flex h-12 w-12 items-center justify-center rounded-lg', isCurrentWeek ? 'bg-primary-100 text-primary-600' : 'bg-gray-100 text-gray-600')}>
+            <div className={cn('flex h-12 w-12 items-center justify-center rounded-xl', isCurrentWeek ? 'bg-primary-100 text-primary-600' : 'bg-muted text-muted-foreground')}>
               {isLocked ? (
                 <Lock className="h-6 w-6" />
               ) : (
@@ -74,12 +115,22 @@ const WeekCard = memo(function WeekCard({ week, expanded, onToggle, onGoalComple
               )}
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900">{week.title}</h3>
-              <p className="text-sm text-gray-500">{week.description}</p>
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-foreground">{week.title}</h3>
+                {!isLocked && isCurrentWeek && (
+                  <Badge variant="primary" className="text-xs">Current</Badge>
+                )}
+                {isLocked && <Badge variant="gray" className="text-xs">Locked</Badge>}
+              </div>
+              <p className="text-sm text-muted-foreground mt-0.5">{week.description}</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <ProgressRing progress={weekProgress} size={50} strokeWidth={4} />
+            <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
+              <CheckCircle2 className="h-4 w-4 text-success-600" />
+              <span>{weekCompleted}/{week.goals.length}</span>
+            </div>
             <Button
               variant="ghost"
               size="sm"
@@ -90,7 +141,7 @@ const WeekCard = memo(function WeekCard({ week, expanded, onToggle, onGoalComple
             </Button>
             <button
               onClick={(e) => { e.stopPropagation(); onToggle(); }}
-              className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100"
+              className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted"
               aria-label={expanded ? 'Collapse week' : 'Expand week'}
             >
               {expanded ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
@@ -134,19 +185,20 @@ const GoalCard = memo(function GoalCard({ goal, weekNumber, completed, onComplet
     aptitude: Calculator,
   }
   const typeColors = {
-    coding: 'bg-blue-100 text-blue-600',
-    aptitude: 'bg-green-100 text-green-600',
+    coding: { bg: 'bg-primary-100', text: 'text-primary-600' },
+    aptitude: { bg: 'bg-success-100', text: 'text-success-600' },
   }
   const Icon = typeIcons[goal.type] || Target
+  const colors = typeColors[goal.type] || { bg: 'bg-primary-100', text: 'text-primary-600' }
 
   return (
-    <div className={cn('card p-4 flex items-center gap-4', completed && 'bg-success-50 border-success-200')}>
-      <div className={cn('flex h-10 w-10 items-center justify-center rounded-lg', typeColors[goal.type])}>
+    <Card className={cn('p-4 flex items-center gap-4 transition-all duration-200', completed && 'bg-success-50 border-success-200')}>
+      <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', colors.bg, colors.text)}>
         <Icon className="h-5 w-5" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-gray-900">{goal.title}</p>
-        <p className="text-sm text-gray-500 capitalize">{goal.type} practice</p>
+        <p className="font-medium text-foreground">{goal.title}</p>
+        <p className="text-sm text-muted-foreground capitalize">{goal.type} practice</p>
       </div>
       <Button
         variant={completed ? 'success' : 'outline'}
@@ -163,43 +215,54 @@ const GoalCard = memo(function GoalCard({ goal, weekNumber, completed, onComplet
           'Mark Complete'
         )}
       </Button>
-    </div>
+    </Card>
   )
 })
 
 GoalCard.displayName = "GoalCard"
 
 const MilestoneCard = memo(function MilestoneCard({ milestone, completed, index }) {
-  const colors = [
-    'bg-primary-100 text-primary-600',
-    'bg-success-100 text-success-600',
-    'bg-warning-100 text-warning-600',
-    'bg-purple-100 text-purple-600',
+  const milestoneColors = [
+    { bg: 'bg-primary-100', text: 'text-primary-600', border: 'border-primary-200', icon: Sparkles },
+    { bg: 'bg-success-100', text: 'text-success-600', border: 'border-success-200', icon: Zap },
+    { bg: 'bg-accent-100', text: 'text-accent-600', border: 'border-accent-200', icon: ArrowRight },
+    { bg: 'bg-purple-100', text: 'text-purple-600', border: 'border-purple-200', icon: Target },
   ]
+  const color = milestoneColors[index % milestoneColors.length]
+  const Icon = color.icon
 
   return (
-    <div className="relative flex items-start gap-4">
-      <div className="relative flex h-12 w-12 items-center justify-center rounded-full flex-shrink-0">
-        <div className={cn('flex h-8 w-8 items-center justify-center rounded-full', colors[index % colors.length])}>
+    <Card className={cn('p-4 flex items-start gap-4 transition-all duration-200', completed && 'bg-success-50 border-success-200')}>
+      <div className="relative flex items-start gap-4">
+        <div className="relative flex h-12 w-12 items-center justify-center rounded-xl flex-shrink-0">
+          <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', color.bg, color.text)}>
+            {completed ? (
+              <CheckCircle2 className="h-5 w-5" />
+            ) : (
+              <Icon className="h-5 w-5" />
+            )}
+          </div>
+          {index < 3 && (
+            <div className="absolute left-5 top-12 h-full w-0.5 bg-border" />
+          )}
+        </div>
+        <div className="flex-1 pt-1">
+          <p className={cn('font-medium', completed ? 'text-foreground' : 'text-muted-foreground')}>
+            {milestone}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {completed ? 'Achieved' : 'Upcoming milestone'}
+          </p>
+        </div>
+        <div className={cn('flex h-8 w-8 items-center justify-center rounded-lg shrink-0', completed ? 'bg-success-100 text-success-600' : color.bg + ' ' + color.text)}>
           {completed ? (
-            <CheckCircle2 className="h-5 w-5 text-white" />
+            <CheckCircle2 className="h-4 w-4" />
           ) : (
             <span className="text-sm font-bold">{index + 1}</span>
           )}
         </div>
-        {index < 3 && (
-          <div className="absolute left-5 top-12 h-full w-0.5 bg-gray-200" />
-        )}
       </div>
-      <div className="flex-1 pt-1">
-        <p className={cn('font-medium', completed ? 'text-gray-900' : 'text-gray-600')}>
-          {milestone}
-        </p>
-        <p className="text-sm text-gray-400">
-          {completed ? 'Achieved' : 'Upcoming milestone'}
-        </p>
-      </div>
-    </div>
+    </Card>
   )
 })
 
@@ -280,79 +343,84 @@ export function PersonalizedRoadmapDashboard() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-8 animate-fade-in">
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Overall Progress</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{overallProgress}%</p>
-            </div>
-            <ProgressRing progress={overallProgress} size={60} strokeWidth={5} />
-          </div>
-        </Card>
-        <Card className="p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Current Week</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">Week {activeWeek}</p>
-            </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-100 text-primary-600">
-              <Flag className="h-6 w-6" />
-            </div>
-          </div>
-        </Card>
-        <Card className="p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Goals Completed</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{completedCount} / {totalGoals}</p>
-            </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-success-100 text-success-600">
-              <CheckCircle2 className="h-6 w-6" />
-            </div>
-          </div>
-        </Card>
-        <Card className="p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">This Week Progress</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{currentWeekProgress}%</p>
-            </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 text-purple-600">
-              <Star className="h-6 w-6" />
-            </div>
-          </div>
-        </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
+          title="Overall Progress"
+          value={`${overallProgress}%`}
+          icon={<ProgressRing progress={overallProgress} size={56} strokeWidth={4} />}
+          trend="+15% this month"
+          trendPositive
+        />
+        <StatCard
+          title="Current Week"
+          value={`Week ${activeWeek}`}
+          icon={<Flag className="h-6 w-6" />}
+          iconBg="bg-primary-100"
+          iconColor="text-primary-600"
+          trend="On track"
+          trendPositive
+        />
+        <StatCard
+          title="Goals Completed"
+          value={`${completedCount} / ${totalGoals}`}
+          icon={<CheckCircle2 className="h-6 w-6" />}
+          iconBg="bg-success-100"
+          iconColor="text-success-600"
+          trend="+3 this week"
+          trendPositive
+        />
+        <StatCard
+          title="This Week Progress"
+          value={`${currentWeekProgress}%`}
+          icon={<Star className="h-6 w-6" />}
+          iconBg="bg-accent-100"
+          iconColor="text-accent-600"
+          trend="Keep pushing!"
+        />
       </div>
 
       {/* Current Week Focus */}
-      <Card className="p-5 bg-gradient-to-r from-primary-50 to-primary-100 border-primary-200">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-primary-700 font-medium">Current Focus</p>
-            <h3 className="text-xl font-bold text-gray-900 mt-1">{currentWeek?.title}</h3>
-            <p className="text-sm text-gray-600 mt-1">{currentWeek?.description}</p>
+      <Card className="p-6 bg-gradient-to-r from-primary-50 via-primary-100 to-accent-50 border-primary-200 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width%3D%2260%22 height%3D%2260%22 viewBox%3D%220 0 60 60%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg fill%3D%22none%22 fill-rule%3D%22evenodd%22%3E%3Cg fill%3D%22%230D9488%22 fill-opacity%3D%220.03%22%3E%3Cpath d%3D%22M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-50" />
+        <div className="relative flex items-center justify-between">
+          <div className="flex-1 pr-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-sm font-medium mb-3">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+              </span>
+              Current Focus
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900">{currentWeek?.title}</h3>
+            <p className="text-gray-600 mt-1 max-w-xl">{currentWeek?.description}</p>
+            <div className="mt-4 flex items-center gap-3">
+              <ProgressRing progress={currentWeekProgress} size={60} strokeWidth={4} />
+              <div>
+                <p className="text-sm text-muted-foreground">Week Progress</p>
+                <p className="text-2xl font-bold text-primary-600">{currentWeekProgress}%</p>
+              </div>
+            </div>
           </div>
-          <ProgressRing progress={currentWeekProgress} size={70} strokeWidth={5} />
+          <div className="hidden lg:block">
+            <Sparkles className="h-16 w-16 text-primary-300 opacity-50" />
+          </div>
         </div>
       </Card>
 
       {/* Milestones Timeline */}
       <SectionHeader title="Learning Milestones" description="Key checkpoints in your placement journey" />
-      <Card className="p-5">
-        <div className="space-y-6">
-          {milestones.map((milestone, index) => (
-            <MilestoneCard
-              key={index}
+      <div className="space-y-4">
+        {milestones.map((milestone, index) => (
+          <MilestoneCard
+            key={index}
               milestone={milestone}
               completed={index < activeWeek - 1 || (index === activeWeek - 1 && currentWeekProgress === 100)}
               index={index}
             />
           ))}
         </div>
-      </Card>
 
       {/* Weekly Roadmap */}
       <SectionHeader

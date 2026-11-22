@@ -117,7 +117,7 @@ export function setTrait(key, value) {
 
 /**
  * Track an event with Flagsmith for experimentation
- * @param {string} eventName - Event name (e.g., 'practice_completed')
+ * @param {string} eventName - Event name (must match metric definition, e.g., 'practice_completed')
  * @param {object} opts - Optional: value, traits, metadata
  */
 export function trackEvent(eventName, opts = {}) {
@@ -127,9 +127,36 @@ export function trackEvent(eventName, opts = {}) {
   }
 
   try {
-    flagsmithInstance.trackEvent(eventName, opts)
+    // For experimentation, the event name must match the metric definition exactly
+    flagsmithInstance.trackEvent(eventName, {
+      identifier: opts.identifier,
+      traits: opts.traits,
+      metadata: {
+        variation: opts.variation,
+        ...opts.metadata
+      }
+    })
   } catch (error) {
     console.error('[Flagsmith] Error tracking event:', error)
+  }
+}
+
+/**
+ * Track experiment exposure (when user sees a variation)
+ * @param {string} flagKey - The multivariate flag key
+ * @param {string} variationKey - The variant key user was assigned to
+ */
+export function trackExposure(flagKey, variationKey) {
+  if (!flagsmithInstance) return
+  try {
+    flagsmithInstance.trackEvent('experiment_exposure', {
+      metadata: {
+        flag_key: flagKey,
+        variation_key: variationKey
+      }
+    })
+  } catch (error) {
+    console.error('[Flagsmith] Error tracking exposure:', error)
   }
 }
 

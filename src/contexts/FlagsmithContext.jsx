@@ -1,12 +1,14 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
 import {
   initFlagsmith,
   getVariation,
   destroyFlagsmith,
-  waitForFlagsmith
+  waitForFlagsmith,
+  trackExposure
 } from '@services/flagsmith.js'
 import { EXPERIMENT_VARIATIONS } from '@utils/constants.js'
 import { useAuth } from './AuthContext.jsx'
+import { FLAGSMITH_FLAG_KEY } from '@utils/constants.js'
 
 const FlagsmithContext = createContext(null)
 
@@ -23,6 +25,7 @@ export function FlagsmithProvider({ children }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [ready, setReady] = useState(false)
+  const exposureTracked = useRef(false)
 
   const evaluateFlag = useCallback(async () => {
     // Wait for auth to finish loading
@@ -66,6 +69,16 @@ export function FlagsmithProvider({ children }) {
       const finalVariation = flagsmithVariation || storedVariation || EXPERIMENT_VARIATIONS.DAILY_PRACTICE
       setVariation(finalVariation)
       setReady(true)
+
+      // Track experiment exposure for experimentation (once per session)
+      if (!exposureTracked.current && finalVariation) {
+        const variationKey = finalVariation === EXPERIMENT_VARIATIONS.PERSONALIZED_ROADMAP
+          ? 'personalized_roadmap'
+          : 'daily_practice'
+        trackExposure(FLAGSMITH_FLAG_KEY, variationKey)
+        exposureTracked.current = true
+        console.log('[Flagsmith] Exposure tracked:', variationKey)
+      }
     } catch (err) {
       console.error('[Flagsmith] Error evaluating flag:', err)
       setError(err.message)
