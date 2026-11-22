@@ -205,7 +205,7 @@ export function Layout({ children }) {
         </header>
 
         {/* Page content */}
-        <main className="p-4 sm:p-6 lg:p-8" role="main">
+        <main className="p-4 sm:p-5 lg:p-6" role="main">
           {children}
         </main>
       </div>
@@ -215,10 +215,10 @@ export function Layout({ children }) {
 
 export function PageHeader({ title, description, action, className = '' }) {
   return (
-    <div className={cn('mb-6', className)}>
+    <div className={cn('mb-4', className)}>
       <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
       {description && <p className="mt-1 text-gray-600">{description}</p>}
-      {action && <div className="mt-4">{action}</div>}
+      {action && <div className="mt-3">{action}</div>}
     </div>
   )
 }

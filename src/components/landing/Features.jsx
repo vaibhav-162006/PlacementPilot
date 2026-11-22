@@ -6,6 +6,7 @@ import {
   Target,
   TrendingUp,
   Trophy,
+  Zap,
   BarChart3,
 } from 'lucide-react'
 

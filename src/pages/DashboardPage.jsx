@@ -26,8 +26,8 @@ function DashboardContent() {
         title={variation === 'daily_practice' ? 'Daily Practice Dashboard' : 'Personalized Roadmap Dashboard'}
         description={variation === 'daily_practice'
           ? 'Your daily coding challenges, aptitude questions, and practice goals'
-          : 'Your weekly placement preparation roadmap with milestones and progress tracking'
-        }
+          : 'Your weekly placement preparation roadmap with milestones and progress tracking'}
+        className="mb-4"
       />
 
       {variation === 'daily_practice' ? (
