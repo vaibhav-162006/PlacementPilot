@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Outlet, NavLink, useLocation } from 'react-router-dom'
+import { Outlet, NavLink, useLocation, Link } from 'react-router-dom'
 import { cn } from '@utils/helpers.js'
 import {
   LayoutDashboard,
@@ -216,9 +216,6 @@ export function Layout({ children }) {
     </div>
   )
 }
-
-// Helper for logo link
-import { Link } from 'react-router-dom'
 
 export function PageHeader({ title, description, action, className = '' }) {
   return (

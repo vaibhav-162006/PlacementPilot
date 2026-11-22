@@ -8,9 +8,33 @@ if (!environmentId) {
 
 let flagsmithInstance = null
 
+// REST API fallback for flag evaluation
+async function fetchFlagViaAPI(userId) {
+  try {
+    const response = await fetch(`https://api.flagsmith.com/api/v1/identities/?identifier=${encodeURIComponent(userId)}`, {
+      headers: {
+        'X-Environment-Key': environmentId,
+      },
+    })
+    if (!response.ok) throw new Error('Failed to fetch identity')
+    const data = await response.json()
+    const flag = data.flags?.find(f => f.feature?.name === 'placement_dashboard_experiment')
+    if (flag?.feature_state_value) {
+      const value = typeof flag.feature_state_value === 'string'
+        ? JSON.parse(flag.feature_state_value)
+        : flag.feature_state_value
+      return value.dashboardType || flag.variant
+    }
+    return 'daily_practice'
+  } catch (error) {
+    console.error('[Flagsmith] API fetch error:', error)
+    return 'daily_practice'
+  }
+}
+
 export function initFlagsmith(userId, traits = {}) {
   if (flagsmithInstance) {
-    flagsmithInstance.destroy()
+    flagsmithInstance.close()
   }
 
   flagsmithInstance = createFlagsmithInstance({
@@ -20,8 +44,14 @@ export function initFlagsmith(userId, traits = {}) {
     cacheFlags: true,
     enableAnalytics: true,
     enableEvents: true, // Enable events pipeline for experimentation
+    realtime: false,
+    api: 'https://api.flagsmith.com/api/v1',
+    enableLogs: true,
     onChange: (oldFlags, params) => {
       console.log('[Flagsmith] Flags changed:', params)
+    },
+    onError: (error) => {
+      console.error('[Flagsmith] Error:', error)
     },
   })
 
@@ -49,7 +79,9 @@ export async function getVariation(userId, traits = {}) {
       return value.dashboardType || value
     }
 
-    return 'daily_practice'
+    // Fallback to REST API if SDK doesn't have the flag yet
+    console.log('[Flagsmith] SDK evaluation returned nothing, falling back to REST API')
+    return await fetchFlagViaAPI(userId)
   } catch (error) {
     console.error('[Flagsmith] Error getting variation:', error)
     return 'daily_practice'
@@ -124,34 +156,39 @@ export async function closeFlagsmith(timeoutMs = 5000) {
 
 export function destroyFlagsmith() {
   if (flagsmithInstance) {
-    flagsmithInstance.destroy()
+    flagsmithInstance.close()
     flagsmithInstance = null
   }
 }
 
 export function isFlagsmithReady() {
-  return flagsmithInstance !== null && flagsmithInstance.initialised
+  return flagsmithInstance !== null && flagsmithInstance.loadingState?.isLoading === false
 }
 
-export async function waitForFlagsmith(timeout = 5000) {
+export async function waitForFlagsmith(timeout = 3000) {
   if (!flagsmithInstance) return false
 
   return new Promise((resolve) => {
-    if (flagsmithInstance.initialised) {
+    // Check if already loaded
+    const state = flagsmithInstance.loadingState
+    console.log('[waitForFlagsmith] Initial state:', state)
+    if (state?.isLoading === false) {
       resolve(true)
       return
     }
 
     const interval = setInterval(() => {
-      if (flagsmithInstance.initialised) {
+      const s = flagsmithInstance.loadingState
+      if (s?.isLoading === false) {
         clearInterval(interval)
         clearTimeout(timeoutId)
         resolve(true)
       }
-    }, 100)
+    }, 200)
 
     const timeoutId = setTimeout(() => {
       clearInterval(interval)
+      console.log('[waitForFlagsmith] Timeout, using fallback')
       resolve(false)
     }, timeout)
   })

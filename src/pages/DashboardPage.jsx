@@ -7,12 +7,16 @@ import { useExperiment } from '@hooks/useFlagsmith.js'
 import { LoadingSpinner } from '@components/common/LoadingSpinner.jsx'
 
 function DashboardContent() {
-  const { variation, loading, ready } = useExperiment()
+  const { variation, loading, ready, error } = useExperiment()
+
+  console.log('[DashboardContent] State:', { variation, loading, ready, error })
 
   if (loading || !ready) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
+      <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
         <LoadingSpinner size="lg" />
+        <p className="text-gray-500">Loading dashboard... (loading={loading}, ready={ready})</p>
+        {error && <p className="text-error-600 text-sm">Error: {error}</p>}
       </div>
     )
   }
