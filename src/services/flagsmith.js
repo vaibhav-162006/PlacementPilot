@@ -68,6 +68,13 @@ export async function getVariation(userId, traits = {}) {
   }
 
   try {
+    // Explicitly initialize the SDK (required for proper flag loading)
+    await flagsmithInstance.init({
+      environmentID: environmentId,
+      identity: userId,
+      traits,
+    })
+
     await flagsmithInstance.identify(userId, traits)
 
     const hasFeature = flagsmithInstance.hasFeature('placement_dashboard_experiment')

@@ -15,6 +15,7 @@ import { LoadingSpinner } from '@components/common/LoadingSpinner.jsx'
 import { Card, CardHeader, CardBody, CardTitle } from '@components/common/Card.jsx'
 import { Users, TrendingUp, BarChart3, Target, Clock, CheckCircle2 } from 'lucide-react'
 import { EXPERIMENT_VARIATIONS } from '@utils/constants.js'
+import { cn } from '@utils/helpers.js'
 
 function AdminAnalyticsContent() {
   const [analytics, setAnalytics] = useState(null)
