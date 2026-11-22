@@ -13,6 +13,7 @@
     "@flagsmith/flagsmith": "^12.5.0",
     "@supabase/supabase-js": "^2.119.2",
     "lucide-react": "^1.77.0",
+    "node-fetch": "^3.3.2",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-router-dom": "^7.18.6",

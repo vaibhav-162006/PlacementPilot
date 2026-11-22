@@ -82,6 +82,7 @@ export function AuthProvider({ children }) {
       return { success: false, error }
     }
     if (data.user) {
+      setUser(data.user)
       await createProfile(data.user.id, { email, ...metadata })
       const variation = EXPERIMENT_VARIATIONS.DAILY_PRACTICE
       await createExperimentAssignment(data.user.id, variation)
@@ -94,6 +95,16 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     setLoading(true)
     const { data, error } = await signIn(email, password)
+    if (!error && data?.user) {
+      setUser(data.user)
+      await fetchProfile(data.user.id)
+      let variation = await fetchExperimentAssignment(data.user.id)
+      if (!variation) {
+        variation = EXPERIMENT_VARIATIONS.DAILY_PRACTICE
+        await createExperimentAssignment(data.user.id, variation)
+        setExperimentVariation(variation)
+      }
+    }
     setLoading(false)
     return { success: !error, data, error }
   }

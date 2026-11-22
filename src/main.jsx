@@ -1,6 +1,5 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
 import '@styles/index.css'
 import App from './App.jsx'
 import { AuthProvider } from '@contexts/AuthContext.jsx'
@@ -15,14 +14,12 @@ window.addEventListener('beforeunload', async () => {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <FlagsmithProvider>
-          <AnalyticsProvider>
-            <App />
-          </AnalyticsProvider>
-        </FlagsmithProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <AuthProvider>
+      <FlagsmithProvider>
+        <AnalyticsProvider>
+          <App />
+        </AnalyticsProvider>
+      </FlagsmithProvider>
+    </AuthProvider>
   </StrictMode>,
 )

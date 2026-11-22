@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { BookOpen, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import { Button } from '@components/common/Button.jsx'
 import { Input } from '@components/common/Input.jsx'
+import { Card } from '@components/common/Card.jsx'
 import { useAuth } from '@contexts/AuthContext.jsx'
 
 export function LoginForm() {
