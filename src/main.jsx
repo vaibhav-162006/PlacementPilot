@@ -6,6 +6,12 @@ import App from './App.jsx'
 import { AuthProvider } from '@contexts/AuthContext.jsx'
 import { FlagsmithProvider } from '@contexts/FlagsmithContext.jsx'
 import { AnalyticsProvider } from '@contexts/AnalyticsContext.jsx'
+import { flushAnalyticsEvents } from '@services/analytics.js'
+
+// Flush events before page unload
+window.addEventListener('beforeunload', async () => {
+  await flushAnalyticsEvents()
+})
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

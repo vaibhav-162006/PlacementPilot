@@ -19,6 +19,7 @@ export function initFlagsmith(userId, traits = {}) {
     traits,
     cacheFlags: true,
     enableAnalytics: true,
+    enableEvents: true, // Enable events pipeline for experimentation
     onChange: (oldFlags, params) => {
       console.log('[Flagsmith] Flags changed:', params)
     },
@@ -75,6 +76,52 @@ export function setTrait(key, value) {
   flagsmithInstance.setTrait(key, value)
 }
 
+/**
+ * Track an event with Flagsmith for experimentation
+ * @param {string} eventName - Event name (e.g., 'practice_completed')
+ * @param {object} opts - Optional: value, traits, metadata
+ */
+export function trackEvent(eventName, opts = {}) {
+  if (!flagsmithInstance) {
+    console.warn('[Flagsmith] Instance not initialized, cannot track event:', eventName)
+    return
+  }
+
+  try {
+    flagsmithInstance.trackEvent(eventName, opts)
+  } catch (error) {
+    console.error('[Flagsmith] Error tracking event:', error)
+  }
+}
+
+/**
+ * Flush buffered events to Flagsmith
+ * Call before page unload or app exit
+ */
+export async function flushEvents() {
+  if (!flagsmithInstance) return
+
+  try {
+    await flagsmithInstance.flushEvents()
+  } catch (error) {
+    console.error('[Flagsmith] Error flushing events:', error)
+  }
+}
+
+/**
+ * Close Flagsmith client and flush events
+ * @param {number} timeoutMs - Max time to wait for flush
+ */
+export async function closeFlagsmith(timeoutMs = 5000) {
+  if (!flagsmithInstance) return
+
+  try {
+    await flagsmithInstance.close(timeoutMs)
+  } catch (error) {
+    console.error('[Flagsmith] Error closing:', error)
+  }
+}
+
 export function destroyFlagsmith() {
   if (flagsmithInstance) {
     flagsmithInstance.destroy()
@@ -90,12 +137,6 @@ export async function waitForFlagsmith(timeout = 5000) {
   if (!flagsmithInstance) return false
 
   return new Promise((resolve) => {
-    const checkReady = () => {
-      if (flagsmithInstance.initialised) {
-        resolve(true)
-      }
-    }
-
     if (flagsmithInstance.initialised) {
       resolve(true)
       return

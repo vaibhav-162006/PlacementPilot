@@ -1,15 +1,6 @@
-import {
-  trackEvent,
-  createPracticeSession,
-  completePracticeSession,
-  getPracticeSessions
-} from '@services/supabase.js'
-import {
-  EVENT_NAMES,
-  STORAGE_KEYS,
-  PRACTICE_TYPES,
-  EXPERIMENT_VARIATIONS
-} from '@utils/constants.js'
+import * as supabaseService from '@services/supabase.js'
+import { trackEvent as trackFlagsmithEvent, flushEvents as flushFlagsmithEvents } from '@services/flagsmith.js'
+import { EVENT_NAMES, STORAGE_KEYS, PRACTICE_TYPES, EXPERIMENT_VARIATIONS } from '@utils/constants.js'
 import { getSessionStorage, setSessionStorage, generateId } from '@utils/helpers.js'
 
 let currentVariation = null
@@ -35,11 +26,23 @@ async function track(eventName, metadata = {}) {
   }
 
   try {
-    const { error } = await trackEvent(currentUserId, eventName, currentVariation, metadata)
+    // Track to Supabase (existing analytics)
+    const { error } = await supabaseService.trackEvent(currentUserId, eventName, currentVariation, metadata)
     if (error) {
-      console.error('[Analytics] Failed to track event:', error)
+      console.error('[Analytics] Failed to track event to Supabase:', error)
       return { success: false, error }
     }
+
+    // Track to Flagsmith for experimentation
+    // The event name must match the metric definition exactly
+    trackFlagsmithEvent(eventName, {
+      identifier: currentUserId,
+      metadata: {
+        variation: currentVariation,
+        ...metadata
+      }
+    })
+
     return { success: true }
   } catch (error) {
     console.error('[Analytics] Error tracking event:', error)
@@ -70,7 +73,7 @@ export async function trackDashboardViewed() {
 export async function trackPracticeStarted(sessionType, sessionId = null) {
   const id = sessionId || generateId('session-')
 
-  await createPracticeSession(currentUserId, currentVariation, sessionType, id)
+  await supabaseService.createPracticeSession(currentUserId, currentVariation, sessionType, id)
 
   return track(EVENT_NAMES.PRACTICE_STARTED, {
     session_type: sessionType,
@@ -79,7 +82,7 @@ export async function trackPracticeStarted(sessionType, sessionId = null) {
 }
 
 export async function trackPracticeCompleted(sessionType, sessionId, durationSeconds = null) {
-  await completePracticeSession(currentUserId, sessionId, currentVariation)
+  await supabaseService.completePracticeSession(currentUserId, sessionId, currentVariation)
 
   return track(EVENT_NAMES.PRACTICE_COMPLETED, {
     session_type: sessionType,
@@ -102,8 +105,12 @@ export async function trackLearningGoalCompleted(goalId, weekNumber) {
   })
 }
 
+export async function flushAnalyticsEvents() {
+  await flushFlagsmithEvents()
+}
+
 export async function getUserPracticeStats(userId, variation) {
-  const { data: sessions, error } = await getPracticeSessions(userId, variation)
+  const { data: sessions, error } = await supabaseService.getPracticeSessions(userId, variation)
 
   if (error || !sessions) {
     return { total: 0, completed: 0, completionRate: 0 }
@@ -117,7 +124,7 @@ export async function getUserPracticeStats(userId, variation) {
 }
 
 export async function getExperimentAnalytics() {
-  const { data, error } = await import('@services/supabase.js').then(m => m.getAnalyticsSummary())
+  const { data, error } = await supabaseService.getAnalyticsSummary()
 
   if (error || !data) {
     return {
