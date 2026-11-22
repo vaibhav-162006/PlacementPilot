@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from 'react'
+import { useState, useEffect } from 'react'
 import { cn } from '@utils/helpers.js'
 import {
   CheckCircle2,
@@ -14,179 +14,13 @@ import {
   Sparkles,
   Zap,
 } from 'lucide-react'
-import { Card } from '@components/common/Card.jsx'
 import { Button } from '@components/common/Button.jsx'
-import { Badge } from '@components/common/Badge.jsx'
 import { LoadingSpinner, SkeletonCard } from '@components/common/LoadingSpinner.jsx'
-import { SectionHeader } from '@components/common/SectionHeader.jsx'
 import { MOCK_PRACTICE_DATA, DAILY_GOALS } from '@utils/constants.js'
 import { useExperiment } from '@hooks/useFlagsmith.js'
 import { useEventTracking } from '@hooks/useAnalytics.js'
-
-const ProgressRing = memo(function ProgressRing({ progress, size = 80, strokeWidth = 6, className = '' }) {
-  const radius = (size - strokeWidth) / 2
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference - (progress / 100) * circumference
-
-  return (
-    <div className={cn('relative', className)}>
-      <svg width={size} height={size} className="transform -rotate-90">
-        <circle
-          className="text-gray-200"
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          strokeWidth={strokeWidth}
-        />
-        <circle
-          className="text-primary-600 transition-all duration-500"
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          strokeWidth={strokeWidth}
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          strokeLinecap="round"
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-xl font-bold text-gray-900">{progress}%</span>
-      </div>
-    </div>
-  )
-})
-
-ProgressRing.displayName = 'ProgressRing'
-
-const StatCard = memo(function StatCard({
-  title,
-  value,
-  icon,
-  iconBg = 'bg-primary-100',
-  iconColor = 'text-primary-600',
-  trend,
-  trendPositive = false,
-}) {
-  return (
-    <Card className="p-5 transition-all duration-200 hover:shadow-card-hover">
-      <div className="flex items-start justify-between">
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <p className="text-2xl font-bold text-foreground mt-1">{value}</p>
-          {trend && (
-            <p className={cn(
-              'text-sm mt-2 flex items-center gap-1',
-              trendPositive ? 'text-success-600' : 'text-muted-foreground'
-            )}>
-              {trendPositive && <TrendingUp className="h-3.5 w-3.5" />}
-              {trend}
-            </p>
-          )}
-        </div>
-        <div className={cn('flex h-12 w-12 items-center justify-center rounded-xl shrink-0', iconBg, iconColor)}>
-          {icon}
-        </div>
-      </div>
-    </Card>
-  )
-})
-
-StatCard.displayName = 'StatCard'
-
-const DailyGoalCard = memo(function DailyGoalCard({ goal, completed, onToggle }) {
-  const icons = {
-    coding: Code,
-    aptitude: Calculator,
-    reading: BookOpen,
-    mock: Target,
-  }
-
-  const Icon = icons[goal.type] || Target
-  const typeColors = {
-    coding: { bg: 'bg-primary-100', text: 'text-primary-600' },
-    aptitude: { bg: 'bg-success-100', text: 'text-success-600' },
-    reading: { bg: 'bg-purple-100', text: 'text-purple-600' },
-    mock: { bg: 'bg-accent-100', text: 'text-accent-600' },
-  }
-  const colors = typeColors[goal.type] || { bg: 'bg-primary-100', text: 'text-primary-600' }
-
-  return (
-    <Card className={cn('p-4 flex items-center gap-4 transition-all duration-200', completed && 'bg-success-50 border-success-200')}>
-      <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', colors.bg, colors.text)}>
-        <Icon className="h-5 w-5" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="font-medium text-foreground">{goal.title}</p>
-        <p className="text-sm text-muted-foreground">Target: {goal.target} {goal.unit}{goal.target > 1 ? 's' : ''}</p>
-      </div>
-      <Button
-        variant={completed ? 'success' : 'outline'}
-        size="sm"
-        onClick={onToggle}
-        disabled={completed}
-      >
-        {completed ? (
-          <>
-            <CheckCircle2 className="h-4 w-4" />
-            Done
-          </>
-        ) : (
-          'Start'
-        )}
-      </Button>
-    </Card>
-  )
-})
-
-DailyGoalCard.displayName = 'DailyGoalCard'
-
-const PracticeCard = memo(function PracticeCard({ practice, onStart, loading }) {
-  const difficultyColors = {
-    Easy: { badge: 'bg-success-100 text-success-700', icon: '🟢' },
-    Medium: { badge: 'bg-warning-100 text-warning-700', icon: '🟡' },
-    Hard: { badge: 'bg-error-100 text-error-700', icon: '🔴' },
-  }
-  const difficulty = difficultyColors[practice.difficulty] || difficultyColors.Medium
-
-  return (
-    <Card className="p-4 flex items-center justify-between transition-all duration-200 hover:shadow-card-hover group">
-      <div className="flex items-center gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 text-primary-600 group-hover:scale-110 transition-transform duration-200">
-          <Code className="h-6 w-6" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h4 className="font-medium text-foreground truncate">{practice.title}</h4>
-          <div className="flex items-center gap-3 mt-1.5 text-sm text-muted-foreground">
-            <Badge variant="primary" className="text-xs">{practice.difficulty}</Badge>
-            <span className="flex items-center gap-1">
-              <Clock className="h-3.5 w-3.5" />
-              {practice.estimatedTime}
-            </span>
-            <span className="flex items-center gap-1">
-              <BookOpen className="h-3.5 w-3.5" />
-              {practice.topic}
-            </span>
-          </div>
-        </div>
-      </div>
-      <Button
-        variant="primary"
-        size="sm"
-        onClick={() => onStart(practice)}
-        disabled={loading}
-        leftIcon={loading && <LoadingSpinner size="sm" color="white" />}
-        className="group-hover:bg-accent-600 transition-colors"
-      >
-        <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
-        Start
-      </Button>
-    </Card>
-  )
-})
-
-PracticeCard.displayName = 'PracticeCard'
+import { Section, ContentCard, GoalCard, PracticeCard, StatCard } from '@components/common/Section.jsx'
+import { ProgressRing } from '@components/common/ProgressRing.jsx'
 
 export function DailyPracticeDashboard() {
   const { variation, ready } = useExperiment()
@@ -240,7 +74,7 @@ export function DailyPracticeDashboard() {
   if (loading) {
     return (
       <div className="space-y-6 animate-fade-in">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="stats-grid">
           {[...Array(4)].map((_, i) => (
             <SkeletonCard key={i} />
           ))}
@@ -254,7 +88,7 @@ export function DailyPracticeDashboard() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="stats-grid">
         <StatCard
           title="Daily Progress"
           value={`${progress}%`}
@@ -265,94 +99,96 @@ export function DailyPracticeDashboard() {
         <StatCard
           title="Coding Streak"
           value={`${streak} days`}
-          icon={<Flame className="h-6 w-6" />}
-          iconBg="bg-accent-100"
-          iconColor="text-accent-600"
+          icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8.5 3.5a2.5 2.5 0 0 1 5 0"/><path d="M15 5a3.5 3.5 0 1 0-7 0 4 4 0 1 0 7 0Z"/><path d="M12 14l-3 3 3 3"/></svg>}
+          iconBg="bg-warning/10"
+          iconColor="text-warning"
           trend="Keep it up! 🔥"
         />
         <StatCard
           title="Total Solved"
           value={totalCompleted}
-          icon={<CheckCircle2 className="h-6 w-6" />}
-          iconBg="bg-success-100"
-          iconColor="text-success-600"
+          icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>}
+          iconBg="bg-success/10"
+          iconColor="text-success"
           trend="+3 this week"
           trendPositive
         />
         <StatCard
           title="This Week"
           value="12"
-          icon={<TrendingUp className="h-6 w-6" />}
-          iconBg="bg-primary-100"
-          iconColor="text-primary-600"
+          icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 4 8.5 15.5 5 12 1 8 6 16 17.5 6"/></svg>}
+          iconBg="bg-action/10"
+          iconColor="text-action"
           trend="On track"
           trendPositive
         />
       </div>
 
       {/* Daily Goals */}
-      <SectionHeader title="Today's Goals" description="Complete these daily targets to maintain your streak" />
-      <div className="space-y-3">
-        {goals.map((goal) => (
-          <DailyGoalCard
-            key={goal.id}
-            goal={goal}
-            completed={completedGoals.has(goal.id)}
-            onToggle={() => handleToggleGoal(goal.id)}
-          />
-        ))}
-      </div>
+      <Section
+        title="Today's Goals"
+        description="Complete these daily targets to maintain your streak"
+      >
+        <div className="space-y-3">
+          {goals.map((goal) => (
+            <GoalCard
+              key={goal.id}
+              goal={goal}
+              completed={completedGoals.has(goal.id)}
+              onToggle={() => handleToggleGoal(goal.id)}
+            />
+          ))}
+        </div>
+      </Section>
 
       {/* Coding Practice */}
-      <SectionHeader
+      <Section
         title="Daily Coding Challenges"
         description="Fresh problems every day to sharpen your skills"
         action={
-          <Button variant="ghost" size="sm" leftIcon={<RefreshCw className="h-4 w-4" />}>
+          <button className="btn-ghost btn-base px-3 py-1.5 text-xs" leftIcon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>}>
             Refresh
-          </Button>
+          </button>
         }
-      />
-      <div className="space-y-3">
-        {codingPractices.map((practice) => (
-          <PracticeCard
-            key={practice.id}
-            practice={practice}
-            onStart={handleStartPractice}
-            loading={startingSession === practice.id}
-          />
-        ))}
-      </div>
+      >
+        <div className="space-y-3">
+          {codingPractices.map((practice) => (
+            <PracticeCard
+              key={practice.id}
+              practice={practice}
+              onStart={handleStartPractice}
+              loading={startingSession === practice.id}
+            />
+          ))}
+        </div>
+      </Section>
 
       {/* Aptitude Practice */}
-      <SectionHeader title="Daily Aptitude Questions" description="Quantitative aptitude practice for placement tests" />
-      <div className="space-y-3">
-        {aptitudePractices.map((practice) => (
-          <PracticeCard
-            key={practice.id}
-            practice={{ ...practice, type: 'aptitude' }}
-            onStart={handleStartPractice}
-            loading={startingSession === practice.id}
-          />
-        ))}
-      </div>
+      <Section
+        title="Daily Aptitude Questions"
+        description="Quantitative aptitude practice for placement tests"
+      >
+        <div className="space-y-3">
+          {aptitudePractices.map((practice) => (
+            <PracticeCard
+              key={practice.id}
+              practice={{ ...practice, type: 'aptitude' }}
+              onStart={handleStartPractice}
+              loading={startingSession === practice.id}
+            />
+          ))}
+        </div>
+      </Section>
 
       {/* Quick Actions */}
-      <SectionHeader title="Quick Actions" />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Button variant="outline" leftIcon={<Code className="h-4 w-4" />}>
-          Random Problem
-        </Button>
-        <Button variant="outline" leftIcon={<Calculator className="h-4 w-4" />}>
-          Aptitude Quiz
-        </Button>
-        <Button variant="outline" leftIcon={<Target className="h-4 w-4" />}>
-          Mock Test
-        </Button>
-        <Button variant="outline" leftIcon={<BookOpen className="h-4 w-4" />}>
-          View Solutions
-        </Button>
-      </div>
+      <Section title="Quick Actions">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <button className="btn-secondary btn-base justify-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Random Problem</button>
+          <button className="btn-secondary btn-base justify-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="6" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Aptitude Quiz</button>
+          <button className="btn-secondary btn-base justify-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Mock Test</button>
+          <button className="btn-secondary btn-base justify-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> View Solutions</button>
+        </div>
+      </Section>
     </div>
   )
 }
