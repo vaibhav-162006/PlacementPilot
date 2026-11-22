@@ -8,43 +8,86 @@ const LoadingFallback = () => (
   </div>
 )
 
-const withSuspense = (Component) => (
-  <Suspense fallback={<LoadingFallback />}>
-    <Component />
-  </Suspense>
-)
+// Lazy load page components for code splitting (handle named exports)
+const LandingPage = lazy(() => import('@pages/LandingPage.jsx').then(m => ({ default: m.LandingPage })))
+const LoginPage = lazy(() => import('@pages/LoginPage.jsx').then(m => ({ default: m.LoginPage })))
+const RegisterPage = lazy(() => import('@pages/RegisterPage.jsx').then(m => ({ default: m.RegisterPage })))
+const DashboardPage = lazy(() => import('@pages/DashboardPage.jsx').then(m => ({ default: m.DashboardPage })))
+const ProfilePage = lazy(() => import('@pages/ProfilePage.jsx').then(m => ({ default: m.ProfilePage })))
+const AdminAnalyticsPage = lazy(() => import('@pages/AdminAnalyticsPage.jsx').then(m => ({ default: m.AdminAnalyticsPage })))
 
-// Lazy load page components for code splitting
-const LandingPage = lazy(() => import('@pages/LandingPage.jsx'))
-const LoginPage = lazy(() => import('@pages/LoginPage.jsx'))
-const RegisterPage = lazy(() => import('@pages/RegisterPage.jsx'))
-const DashboardPage = lazy(() => import('@pages/DashboardPage.jsx'))
-const ProfilePage = lazy(() => import('@pages/ProfilePage.jsx'))
-const AdminAnalyticsPage = lazy(() => import('@pages/AdminAnalyticsPage.jsx'))
+// Wrapper components that add Suspense boundary
+function LandingPageWrapper() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <LandingPage />
+    </Suspense>
+  )
+}
+
+function LoginPageWrapper() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <LoginPage />
+    </Suspense>
+  )
+}
+
+function RegisterPageWrapper() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <RegisterPage />
+    </Suspense>
+  )
+}
+
+function DashboardPageWrapper() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <DashboardPage />
+    </Suspense>
+  )
+}
+
+function ProfilePageWrapper() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <ProfilePage />
+    </Suspense>
+  )
+}
+
+function AdminAnalyticsPageWrapper() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <AdminAnalyticsPage />
+    </Suspense>
+  )
+}
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: withSuspense(LandingPage),
+    element: <LandingPageWrapper />,
   },
   {
     path: '/login',
-    element: withSuspense(LoginPage),
+    element: <LoginPageWrapper />,
   },
   {
     path: '/register',
-    element: withSuspense(RegisterPage),
+    element: <RegisterPageWrapper />,
   },
   {
     path: '/dashboard',
-    element: withSuspense(DashboardPage),
+    element: <DashboardPageWrapper />,
   },
   {
     path: '/profile',
-    element: withSuspense(ProfilePage),
+    element: <ProfilePageWrapper />,
   },
   {
     path: '/admin/analytics',
-    element: withSuspense(AdminAnalyticsPage),
+    element: <AdminAnalyticsPageWrapper />,
   },
 ])
