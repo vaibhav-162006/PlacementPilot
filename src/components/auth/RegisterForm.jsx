@@ -91,7 +91,7 @@ export function RegisterForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <Link to="/" className="inline-flex items-center gap-2 mb-8">
@@ -99,8 +99,8 @@ export function RegisterForm() {
               <BookOpen className="h-7 w-7 text-white" />
             </div>
           </Link>
-          <h2 className="text-3xl font-bold text-gray-900">Create your account</h2>
-          <p className="mt-2 text-gray-600">Start your personalized placement preparation journey</p>
+          <h2 className="text-3xl font-bold text-foreground">Create your account</h2>
+          <p className="mt-2 text-muted-foreground">Start your personalized placement preparation journey</p>
         </div>
 
         <Card className="p-6 sm:p-8">
@@ -180,7 +180,7 @@ export function RegisterForm() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-muted-foreground hover:text-foreground"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -210,9 +210,9 @@ export function RegisterForm() {
                 type="checkbox"
                 id="terms"
                 required
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                className="mt-1 h-4 w-4 rounded border-border text-primary-600 focus:ring-primary-500"
               />
-              <label htmlFor="terms" className="text-sm text-gray-600">
+              <label htmlFor="terms" className="text-sm text-muted-foreground">
                 I agree to the{' '}
                 <Link to="/terms" className="text-primary-600 hover:text-primary-500">Terms of Service</Link>
                 {' '}and{' '}
@@ -231,7 +231,7 @@ export function RegisterForm() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               Already have an account?{' '}
               <Link to="/login" className="text-primary-600 hover:text-primary-500 font-medium">
                 Sign in

@@ -10,8 +10,11 @@ import {
   ChevronLeft,
   ChevronRight,
   BookOpen,
+  Sun,
+  Moon,
 } from 'lucide-react'
 import { useAuth } from '@contexts/AuthContext.jsx'
+import { useTheme } from '@contexts/ThemeContext.jsx'
 import { Button } from './Button.jsx'
 
 const navigation = [
@@ -25,6 +28,7 @@ const adminNavigation = [
 
 export function Layout({ children }) {
   const { user, profile, logout, isAuthenticated } = useAuth()
+  const { theme, toggleTheme, isDark } = useTheme()
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -38,7 +42,7 @@ export function Layout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
@@ -51,7 +55,7 @@ export function Layout({ children }) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 bg-white border-r border-gray-200 transition-all duration-300 ease-in-out lg:relative lg:translate-x-0',
+          'fixed inset-y-0 left-0 z-50 bg-card border-r border-border transition-all duration-300 ease-in-out lg:relative lg:translate-x-0',
           sidebarCollapsed ? 'w-20' : 'w-64',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
@@ -59,18 +63,18 @@ export function Layout({ children }) {
       >
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className={cn('flex items-center justify-between h-16 px-4 border-b border-gray-100', sidebarCollapsed && 'justify-center')}>
+          <div className={cn('flex items-center justify-between h-16 px-4 border-b border-border', sidebarCollapsed && 'justify-center')}>
             <Link to="/dashboard" className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600">
                 <BookOpen className="h-5 w-5 text-white" />
               </div>
               {!sidebarCollapsed && (
-                <span className="text-xl font-bold text-gray-900">PlacementPilot</span>
+                <span className="text-xl font-bold text-foreground">PlacementPilot</span>
               )}
             </Link>
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className={cn('p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 lg:hidden', sidebarCollapsed && 'rotate-180')}
+              className={cn('p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden', sidebarCollapsed && 'rotate-180')}
               aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               {sidebarCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
@@ -89,8 +93,8 @@ export function Layout({ children }) {
                     'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
                     sidebarCollapsed ? 'justify-center' : '',
                     isActive
-                      ? 'bg-primary-50 text-primary-700'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   )}
                   title={sidebarCollapsed ? item.name : undefined}
                   onClick={() => setSidebarOpen(false)}
@@ -104,8 +108,8 @@ export function Layout({ children }) {
 
             {user?.email?.includes('admin') && (
               <>
-                <div className="pt-4 mt-4 border-t border-gray-100">
-                  <p className={cn('px-3 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider', sidebarCollapsed && 'text-center')}>
+                <div className="pt-4 mt-4 border-t border-border">
+                  <p className={cn('px-3 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider', sidebarCollapsed && 'text-center')}>
                     Admin
                   </p>
                   {adminNavigation.map((item) => {
@@ -118,8 +122,8 @@ export function Layout({ children }) {
                           'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
                           sidebarCollapsed ? 'justify-center' : '',
                           isActive
-                            ? 'bg-primary-50 text-primary-700'
-                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                            ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
+                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                         )}
                         title={sidebarCollapsed ? item.name : undefined}
                         onClick={() => setSidebarOpen(false)}
@@ -136,22 +140,22 @@ export function Layout({ children }) {
           </nav>
 
           {/* User section */}
-          <div className={cn('p-4 border-t border-gray-100', sidebarCollapsed && 'items-center')}>
+          <div className={cn('p-4 border-t border-border', sidebarCollapsed && 'items-center')}>
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-medium">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 font-medium">
                 {profile?.full_name ? profile.full_name[0].toUpperCase() : user?.email?.[0].toUpperCase()}
               </div>
               {!sidebarCollapsed && (
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{profile?.full_name || 'Student'}</p>
-                  <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                  <p className="text-sm font-medium text-foreground truncate">{profile?.full_name || 'Student'}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
                 </div>
               )}
             </div>
             <div className="mt-3 flex items-center gap-2">
               <NavLink
                 to="/profile"
-                className={cn('flex-1 flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900', sidebarCollapsed && 'justify-center')}
+                className={cn('flex-1 flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground', sidebarCollapsed && 'justify-center')}
                 title={sidebarCollapsed ? 'Profile' : undefined}
                 onClick={() => setSidebarOpen(false)}
               >
@@ -176,27 +180,38 @@ export function Layout({ children }) {
       {/* Main content */}
       <div className={cn('lg:pl-64 transition-all duration-300', sidebarCollapsed && 'lg:pl-20')}>
         {/* Top bar */}
-        <header className="sticky top-0 z-30 bg-white border-b border-gray-200">
+        <header className="sticky top-0 z-30 bg-card/80 backdrop-blur-sm border-b border-border">
           <div className="flex h-12 items-center justify-between px-4 sm:px-6 lg:px-8">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="lg:hidden p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
               aria-label="Open navigation menu"
             >
               <Menu className="h-6 w-6" />
             </button>
 
             <div className="flex-1 lg:flex-none">
-              <h1 className="text-lg font-semibold text-gray-900">
+              <h1 className="text-lg font-semibold text-foreground">
                 {location.pathname === '/dashboard' && 'Dashboard'}
                 {location.pathname === '/profile' && 'Profile'}
                 {location.pathname === '/admin/analytics' && 'Admin Analytics'}
               </h1>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              {/* Theme Toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleTheme}
+                aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+                className="hidden sm:flex"
+              >
+                {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
+
               <div className="hidden sm:flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-medium">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 font-medium">
                   {profile?.full_name ? profile.full_name[0].toUpperCase() : user?.email?.[0].toUpperCase()}
                 </div>
               </div>
@@ -216,8 +231,8 @@ export function Layout({ children }) {
 export function PageHeader({ title, description, action, className = '' }) {
   return (
     <div className={cn('mb-2', className)}>
-      <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-      {description && <p className="mt-0.5 text-sm text-gray-600">{description}</p>}
+      <h1 className="text-xl font-bold text-foreground">{title}</h1>
+      {description && <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>}
       {action && <div className="mt-2">{action}</div>}
     </div>
   )

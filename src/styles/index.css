@@ -59,7 +59,7 @@
   --color-error-500: #ef4444;
   --color-error-600: #dc2626;
 
-  /* Semantic color aliases for components */
+  /* Semantic color aliases for components (Light mode defaults) */
   --color-background: #f0fdfa;
   --color-foreground: #134e4a;
   --color-card: #ffffff;
@@ -84,15 +84,54 @@
   --shadow-card-hover: var(--shadow-lg);
 }
 
+/* Dark mode semantic colors */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --color-background: #0f172a;
+    --color-foreground: #f0fdfa;
+    --color-card: #1e293b;
+    --color-card-foreground: #f0fdfa;
+    --color-muted: #1e293b;
+    --color-muted-foreground: #94a3b8;
+    --color-border: #334155;
+    --color-ring: #14b8a6;
+  }
+}
+
+/* Explicit dark/light class support */
+.dark {
+  --color-background: #0f172a;
+  --color-foreground: #f0fdfa;
+  --color-card: #1e293b;
+  --color-card-foreground: #f0fdfa;
+  --color-muted: #1e293b;
+  --color-muted-foreground: #94a3b8;
+  --color-border: #334155;
+  --color-ring: #14b8a6;
+}
+
+.light {
+  --color-background: #f0fdfa;
+  --color-foreground: #134e4a;
+  --color-card: #ffffff;
+  --color-card-foreground: #134e4a;
+  --color-muted: #e8f1f4;
+  --color-muted-foreground: #475569;
+  --color-border: #99f6e4;
+  --color-ring: #0d9488;
+}
+
 @layer base {
   * {
-    @apply border-gray-200;
+    @apply border-gray-200 dark:border-gray-700;
   }
 
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    @apply bg-background text-foreground antialiased;
     font-family: var(--font-sans);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    background-color: var(--color-background);
+    color: var(--color-foreground);
   }
 
   html {
@@ -101,7 +140,7 @@
 
   /* Focus visible for accessibility */
   *:focus-visible {
-    @apply outline-none ring-2 ring-primary-600 ring-offset-2;
+    @apply outline-none ring-2 ring-primary-600 ring-offset-2 dark:ring-offset-gray-900;
   }
 
   /* Reduced motion support */

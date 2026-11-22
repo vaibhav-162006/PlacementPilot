@@ -40,7 +40,7 @@ export function Footer() {
   ]
 
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="bg-gray-900 dark:bg-gray-950 text-gray-300 dark:text-gray-400">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
           <div className="lg:col-span-2">
@@ -48,9 +48,9 @@ export function Footer() {
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600">
                 <BookOpen className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">PlacementPilot</span>
+              <span className="text-xl font-bold text-white dark:text-white">PlacementPilot</span>
             </Link>
-            <p className="text-gray-400 max-w-sm mb-6">
+            <p className="text-gray-400 dark:text-gray-400 max-w-sm mb-6">
               A Flagsmith Experimentation Hackathon project demonstrating A/B testing
               for placement preparation dashboards.
             </p>
@@ -59,7 +59,7 @@ export function Footer() {
                 <a
                   key={social.label}
                   href={social.href}
-                  className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white transition-colors"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-800 dark:bg-gray-800 text-gray-400 dark:text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-700 hover:text-white dark:hover:text-white transition-colors"
                   aria-label={social.label}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -71,11 +71,11 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Product</h4>
+            <h4 className="text-sm font-semibold text-white dark:text-white uppercase tracking-wider mb-4">Product</h4>
             <ul className="space-y-3">
               {links.product.map((link) => (
                 <li key={link.label}>
-                  <Link to={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link to={link.href} className="text-sm text-gray-400 dark:text-gray-400 hover:text-white dark:hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -84,11 +84,11 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Company</h4>
+            <h4 className="text-sm font-semibold text-white dark:text-white uppercase tracking-wider mb-4">Company</h4>
             <ul className="space-y-3">
               {links.company.map((link) => (
                 <li key={link.label}>
-                  <Link to={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link to={link.href} className="text-sm text-gray-400 dark:text-gray-400 hover:text-white dark:hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -97,11 +97,11 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Resources</h4>
+            <h4 className="text-sm font-semibold text-white dark:text-white uppercase tracking-wider mb-4">Resources</h4>
             <ul className="space-y-3">
               {links.resources.map((link) => (
                 <li key={link.label}>
-                  <Link to={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link to={link.href} className="text-sm text-gray-400 dark:text-gray-400 hover:text-white dark:hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -110,14 +110,14 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 pt-8">
+        <div className="border-t border-gray-800 dark:border-gray-800 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-400 dark:text-gray-400">
               © {currentYear} PlacementPilot. Built for Flagsmith Experimentation Hackathon.
             </p>
             <div className="flex items-center gap-6">
               {links.legal.map((link) => (
-                <Link key={link.label} to={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
+                <Link key={link.label} to={link.href} className="text-sm text-gray-400 dark:text-gray-400 hover:text-white dark:hover:text-white transition-colors">
                   {link.label}
                 </Link>
               ))}

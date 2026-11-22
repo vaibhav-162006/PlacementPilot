@@ -11,14 +11,14 @@ export function CTA() {
   ]
 
   return (
-    <section className="py-20 lg:py-28 bg-gray-900">
+    <section className="py-20 lg:py-28 bg-gray-900 dark:bg-gray-950">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white dark:text-white">
               Ready to Ace Your Placements?
             </h2>
-            <p className="mt-4 text-lg text-gray-300">
+            <p className="mt-4 text-lg text-gray-300 dark:text-gray-300">
               Join thousands of students preparing smarter with data-driven dashboards.
               Your participation helps us build better learning experiences for everyone.
             </p>
@@ -29,8 +29,8 @@ export function CTA() {
                     <CheckCircle2 className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-xl font-bold text-white">{stat.value}</p>
-                    <p className="text-sm text-gray-400">{stat.label}</p>
+                    <p className="text-xl font-bold text-white dark:text-white">{stat.value}</p>
+                    <p className="text-sm text-gray-400 dark:text-gray-400">{stat.label}</p>
                   </div>
                 </div>
               ))}
@@ -42,7 +42,7 @@ export function CTA() {
                 </Button>
               </Link>
               <Link to="/login">
-                <Button size="lg" variant="outline" className="bg-transparent border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white">
+                <Button size="lg" variant="outline" className="bg-transparent border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white dark:border-gray-600 dark:hover:bg-gray-800">
                   Sign In
                 </Button>
               </Link>
@@ -50,38 +50,38 @@ export function CTA() {
           </div>
 
           <div className="relative">
-            <div className="card bg-gray-800 border-gray-700 p-6 relative overflow-hidden">
+            <div className="card bg-gray-800 border-gray-700 dark:bg-gray-900 dark:border-gray-800 p-6 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-primary-900/20 to-transparent" />
               <div className="relative">
-                <h3 className="text-lg font-semibold text-white mb-4">Experiment Status: Live</h3>
+                <h3 className="text-lg font-semibold text-white dark:text-white mb-4">Experiment Status: Live</h3>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                  <div className="flex items-center justify-between p-4 bg-gray-700/50 dark:bg-gray-800/50 rounded-lg">
                     <div className="flex items-center gap-3">
                       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-500/20 text-primary-400">
                         <Users className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="text-white font-medium">Total Participants</p>
-                        <p className="text-sm text-gray-400">1,247</p>
+                        <p className="text-white dark:text-white font-medium">Total Participants</p>
+                        <p className="text-sm text-gray-400 dark:text-gray-400">1,247</p>
                       </div>
                     </div>
-                    <BarChart3 className="h-6 w-6 text-gray-500" />
+                    <BarChart3 className="h-6 w-6 text-gray-500 dark:text-gray-500" />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-gray-700/50 rounded-lg">
-                      <p className="text-sm text-gray-400">Variation A</p>
-                      <p className="text-2xl font-bold text-white mt-1">623</p>
+                    <div className="p-4 bg-gray-700/50 dark:bg-gray-800/50 rounded-lg">
+                      <p className="text-sm text-gray-400 dark:text-gray-400">Variation A</p>
+                      <p className="text-2xl font-bold text-white dark:text-white mt-1">623</p>
                       <p className="text-xs text-green-400 mt-1">54% completion rate</p>
                     </div>
-                    <div className="p-4 bg-gray-700/50 rounded-lg">
-                      <p className="text-sm text-gray-400">Variation B</p>
-                      <p className="text-2xl font-bold text-white mt-1">624</p>
+                    <div className="p-4 bg-gray-700/50 dark:bg-gray-800/50 rounded-lg">
+                      <p className="text-sm text-gray-400 dark:text-gray-400">Variation B</p>
+                      <p className="text-2xl font-bold text-white dark:text-white mt-1">624</p>
                       <p className="text-xs text-blue-400 mt-1">61% completion rate</p>
                     </div>
                   </div>
                   <div className="p-4 bg-primary-900/30 border border-primary-800 rounded-lg">
-                    <p className="text-sm text-primary-300">
-                      <strong className="text-primary-100">Current Leader:</strong> Variation B (Personalized Roadmap)
+                    <p className="text-sm text-primary-300 dark:text-primary-300">
+                      <strong className="text-primary-100 dark:text-primary-100">Current Leader:</strong> Variation B (Personalized Roadmap)
                       is showing 7% higher completion rate. Experiment continues until statistical significance.
                     </p>
                   </div>

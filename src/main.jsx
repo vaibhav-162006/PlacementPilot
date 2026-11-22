@@ -5,6 +5,7 @@ import App from './App.jsx'
 import { AuthProvider } from '@contexts/AuthContext.jsx'
 import { FlagsmithProvider } from '@contexts/FlagsmithContext.jsx'
 import { AnalyticsProvider } from '@contexts/AnalyticsContext.jsx'
+import { ThemeProvider } from '@contexts/ThemeContext.jsx'
 import { flushAnalyticsEvents } from '@services/analytics.js'
 
 // Flush events before page unload
@@ -14,12 +15,14 @@ window.addEventListener('beforeunload', async () => {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <FlagsmithProvider>
-        <AnalyticsProvider>
-          <App />
-        </AnalyticsProvider>
-      </FlagsmithProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <FlagsmithProvider>
+          <AnalyticsProvider>
+            <App />
+          </AnalyticsProvider>
+        </FlagsmithProvider>
+      </AuthProvider>
+    </ThemeProvider>
   </StrictMode>,
 )
